@@ -36,31 +36,61 @@ document.addEventListener('DOMContentLoaded', function() {
 	const mainImg = document.getElementById('slider-main-img');
 	const thumbsContainer = document.getElementById('slider-thumbs');
 
-	function renderMain(idx) {
-		mainImg.src = sliderData[idx].src;
-		mainImg.style.animation = 'none';
-		// Forzar reflow para reiniciar animación
-		void mainImg.offsetWidth;
-		mainImg.style.animation = 'sliderZoomIn 1s cubic-bezier(.4,1.4,.6,1) 1';
+	function renderMain(idx, fromThumbIdx = null) {
 		const titleDiv = document.getElementById('slider-title');
 		titleDiv.textContent = sliderData[idx].title;
+		// Siempre cargar la imagen principal con el efecto de zoom
+		mainImg.src = sliderData[idx].src;
+		mainImg.style.animation = 'none';
+		void mainImg.offsetWidth;
+		mainImg.style.animation = 'sliderZoomIn 3.5s cubic-bezier(.4,1.4,.6,1) 1';
 	}
 
 	function renderThumbs(idx) {
-		thumbsContainer.innerHTML = '';
-		// Mostrar las siguientes 3 imágenes
-		for(let i=1; i<=3; i++) {
-			const thumbIdx = (idx + i) % sliderData.length;
+		const prevThumbs = Array.from(thumbsContainer.children);
+		if (prevThumbs.length === 3) {
+			prevThumbs[0].style.transform = 'translateX(-180px)';
+			prevThumbs[0].style.opacity = '0';
+			const thumbIdx = (idx + 3) % sliderData.length;
 			const thumb = document.createElement('img');
-			thumb.className = 'slider-thumb';
+			thumb.className = 'slider-thumb grow';
 			thumb.src = sliderData[thumbIdx].src;
 			thumb.alt = 'Miniatura ' + (thumbIdx+1);
+			thumb.style.transform = 'translateX(180px) scale(0.7)';
+			thumb.style.opacity = '0.7';
 			thumb.addEventListener('click', () => {
 				current = thumbIdx;
-				renderMain(current);
+				renderMain(current, 2); // 2 = última miniatura
 				renderThumbs(current);
 			});
 			thumbsContainer.appendChild(thumb);
+			setTimeout(() => {
+				thumb.classList.remove('grow');
+				thumb.style.transform = 'translateX(0) scale(1)';
+				thumb.style.opacity = '1';
+				setTimeout(() => {
+					if (thumbsContainer.firstChild) {
+						thumbsContainer.removeChild(thumbsContainer.firstChild);
+					}
+				}, 400);
+			}, 1600);
+		} else {
+			thumbsContainer.innerHTML = '';
+			for(let i=1; i<=3; i++) {
+				const thumbIdx = (idx + i) % sliderData.length;
+				const thumb = document.createElement('img');
+				thumb.className = 'slider-thumb';
+				thumb.src = sliderData[thumbIdx].src;
+				thumb.alt = 'Miniatura ' + (thumbIdx+1);
+				thumb.style.transform = 'translateX(0) scale(1)';
+				thumb.style.opacity = '1';
+				thumb.addEventListener('click', () => {
+					current = thumbIdx;
+					renderMain(current, i-1);
+					renderThumbs(current);
+				});
+				thumbsContainer.appendChild(thumb);
+			}
 		}
 	}
 
@@ -68,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	renderMain(current);
 	renderThumbs(current);
 
-	// Autoplay cada 8s
+	// Autoplay cada 8s, solo carga la imagen principal que corresponde
 	let timer = setInterval(() => {
 		current = (current + 1) % sliderData.length;
 		renderMain(current);

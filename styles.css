@@ -38,7 +38,7 @@ body {
 	object-fit: cover;
 	border-radius: 24px;
 	display: block;
-	animation: sliderZoomIn 1s cubic-bezier(.4,1.4,.6,1) 1;
+	animation: sliderZoomIn 2s cubic-bezier(.4,1.4,.6,1) 1;
 	transform-origin: center center;
 }
 
@@ -98,6 +98,58 @@ body {
 	right: 32px;
 	bottom: 264px;
 	z-index: 3;
+	overflow: hidden;
+}
+
+.slider-thumb {
+	/* ...existing code... */
+	transition: transform 1s cubic-bezier(.4,0.8,.6,1), opacity 1s cubic-bezier(.4,0.8,.6,1);
+	z-index: 1;
+}
+
+.
+.slider-thumb.grow {
+	z-index: 2;
+	animation: thumbGrow 1.6s cubic-bezier(.4,1.4,.6,1) 1;
+	transform-origin: center center;
+}
+
+@keyframes thumbGrow {
+	0% {
+		transform: scale(1) translateX(180px);
+		opacity: 0.7;
+	}
+	40% {
+		transform: scale(1.15) translateX(0);
+		opacity: 1;
+	}
+	80% {
+		transform: scale(1.7) translateX(0);
+		opacity: 1;
+	}
+	100% {
+		transform: scale(1) translateX(0);
+		opacity: 1;
+	}
+}
+
+.slider-thumb.zoom-in {
+	animation: thumbZoomIn 0.8s cubic-bezier(.4,1.4,.6,1) 1;
+}
+
+@keyframes thumbZoomIn {
+	0% {
+		transform: scale(0.7) translateX(180px);
+		opacity: 0.7;
+	}
+	60% {
+		transform: scale(1.08) translateX(0);
+		opacity: 1;
+	}
+	100% {
+		transform: scale(1) translateX(0);
+		opacity: 1;
+	}
 }
 
 .slider-thumb {
