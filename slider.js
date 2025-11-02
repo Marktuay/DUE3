@@ -1,144 +1,89 @@
-(() => {
-  const images = Array.isArray(window.IMAGES) ? window.IMAGES.slice() : [];
-  // try to sort numerically by filename segment (handles 1.jpg, 10.jpg, etc.)
-  images.sort((a,b)=>{
-    const sa = (typeof a === 'string') ? a : (a && a.src) || '';
-    const sb = (typeof b === 'string') ? b : (b && b.src) || '';
-    const na = parseInt((sa.match(/(\d+)/)||[])[0],10);
-    const nb = parseInt((sb.match(/(\d+)/)||[])[0],10);
-    if(!isNaN(na) && !isNaN(nb)) return na-nb;
-    return sa.localeCompare(sb);
-  });
+// Slider JS: imagen principal y miniaturas superpuestas tipo stack
+document.addEventListener('DOMContentLoaded', function() {
+	// Lista de imágenes (puedes ampliar o cargar dinámicamente)
+	const sliderData = [
+		{ "src": "images/1.jpg", "title": "RAÍCES DEL COMPROMISO EUROPEO CON NICARAGUA", "subtitle": "" },
+		{ "src": "images/2.jpg", "title": "CORAZÓN REGIONAL DEL DIÁLOGO Y LA INTEGRACIÓN REGIONAL", "subtitle": "" },
+		{ "src": "images/3.jpg", "title": "SOLIDARIDAD EUROPEA TRAS EL HURACÁN MITCH", "subtitle": "" },
+		{ "src": "images/4.jpg", "title": "IMPULSANDO ESPERANZA EN LAS COMUNIDADES RURALES", "subtitle": "" },
+		{ "src": "images/5.jpg", "title": "CUENCA DEL RÍO COCO: POBLACIONES PREPARADAS FRENTE AL CAMBIO CLIMÁTICO", "subtitle": "" },
+		{ "src": "images/6.jpg", "title": "RUTA COLONIAL Y DE LOS VOLCANES: TURISMO SOSTENIBLE PARA  EL DESARROLLO LOCAL", "subtitle": "" },
+		{ "src": "images/7.jpg", "title": "AGUA Y SANEAMIENTO PARA LA VIDA", "subtitle": "" },
+		{ "src": "images/8.jpg", "title": "EDUCACIÓN: MOTOR DE DESARROLLO", "subtitle": "" },
+		{ "src": "images/9.jpg", "title": "ENERGÍA LIMPIA PARA UN FUTURO SOSTENIBLE", "subtitle": "" },
+		{ "src": "images/10.jpg", "title": "UNA PUERTA AL MERCADO EUROPEO", "subtitle": "" },
+		{ "src": "images/11.jpg", "title": "CACAO CON ENFOQUEDE GÉNERO", "subtitle": "" },
+		{ "src": "images/12.jpg", "title": "MIPYMES AGROPECUARIAS Y PESQUERAS CON VALOR AGREGADO", "subtitle": "" },
+		{ "src": "images/13.jpg", "title": "ACCESIBILIDAD URBANA CON ENFOQUE INCLUSIVO", "subtitle": "" },
+		{ "src": "images/14.jpg", "title": "TRAZABILIDAD SANITARIA CON ESTÁNDARES INTERNACIONALES", "subtitle": "" },
+		{ "src": "images/15.jpg", "title": "INTEGRACIÓN FRONTERIZA: ACERCANDO A LOS PAÍSES DE LA REGIÓN", "subtitle": "" },
+		{ "src": "images/16.jpg", "title": "MERIENDA ESCOLAR: NUTRICIÓN Y EDUCACIÓN", "subtitle": "" },
+		{ "src": "images/17.jpg", "title": "EQUIPO EUROPA FRENTE AL COVID-19", "subtitle": "" },
+		{ "src": "images/18.jpg", "title": "FERIA DE BECAS DE EUROPA: ABRIENDO MENTES, CAMBIANDO VIDAS", "subtitle": "" },
+		{ "src": "images/19.jpg", "title": "ACUERDO DE ASOCIACIÓN UE-CA: UN PUENTE BIRREGIONAL DE DIÁLOGO, VALORES Y FUTURO COMPARTIDO", "subtitle": "" },
+		{ "src": "images/20.jpg", "title": "JORNADAS EUROPEAS PARA EL DESARROLLO (EDD): UN LLAMADO DESDE LOS OCÉANOS", "subtitle": "" },
+		{ "src": "images/21.jpg", "title": "MUESTRA DE CINE EUROPEO: HISTORIAS Y LENTES QUE NOS UNEN", "subtitle": "" },
+		{ "src": "images/22.jpg", "title": "ÓPERA CARMEN: UN CLÁSICO UNIVERSAL EN EL CORAZÓN DE NICARAGUA", "subtitle": "" },
+		{ "src": "images/23.jpg", "title": "CUÉNTAME EUROPA: SEMBRANDO SUEÑOS EN CADA PÁGINA", "subtitle": "" },
+		{ "src": "images/24.jpg", "title": "PLATIQUEMOS CON EUROPA: VOCES JÓVENES, INTERCAMBIOS QUE ENRIQUECEN", "subtitle": "" },
+		{ "src": "images/25.jpg", "title": "RESPUESTA A EPIDEMIAS: PROTEGER VIDAS, FORTALECER COMUNIDADES", "subtitle": "" },
+		{ "src": "images/26.jpg", "title": "COMUNIDADES MÁS FUERTES FRENTE A DESASTRES NATURALES", "subtitle": "" },
+		{ "src": "images/27.jpg", "title": "SEGURIDAD ALIMENTARIA EN EL CORREDOR SECO: FORTALECIENDO VIDAS Y RESILIENCIA", "subtitle": "" },
+		{ "src": "images/28.jpg", "title": "HURACANES ETA E IOTA: RESPUESTA HUMANITARIA Y RESILIENCIA", "subtitle": "" }
+	];
 
-  const slideContainer = document.querySelector('.slide');
-  const titleEl = document.querySelector('.content .title');
-  const subtitleEl = document.querySelector('.content .subtitle');
-  const prevBtns = document.querySelectorAll('.nav.prev');
-  const nextBtns = document.querySelectorAll('.nav.next');
+	let current = 0;
+	const mainImg = document.getElementById('slider-main-img');
+	const thumbsContainer = document.getElementById('slider-thumbs');
 
-  let current = 0;
-  const total = images.length;
-  const INTERVAL = 8000; // 8 seconds as requested
+	function renderMain(idx) {
+		mainImg.src = sliderData[idx].src;
+		mainImg.style.animation = 'none';
+		// Forzar reflow para reiniciar animación
+		void mainImg.offsetWidth;
+		mainImg.style.animation = 'sliderZoomIn 1s cubic-bezier(.4,1.4,.6,1) 1';
+		const titleDiv = document.getElementById('slider-title');
+		titleDiv.textContent = sliderData[idx].title;
+	}
 
-  // dots navigation removed per user request
+	function renderThumbs(idx) {
+		thumbsContainer.innerHTML = '';
+		// Mostrar las siguientes 3 imágenes
+		for(let i=1; i<=3; i++) {
+			const thumbIdx = (idx + i) % sliderData.length;
+			const thumb = document.createElement('img');
+			thumb.className = 'slider-thumb';
+			thumb.src = sliderData[thumbIdx].src;
+			thumb.alt = 'Miniatura ' + (thumbIdx+1);
+			thumb.addEventListener('click', () => {
+				current = thumbIdx;
+				renderMain(current);
+				renderThumbs(current);
+			});
+			thumbsContainer.appendChild(thumb);
+		}
+	}
 
-  function preloadAll(){
-    images.forEach(item=>{
-      if(!item) return;
-      if(!item.type || item.type !== 'video'){
-        const i=new Image(); i.src=(typeof item==='string')?item:item.src;
-      }
-    });
-  }
+	// Inicializar slider
+	renderMain(current);
+	renderThumbs(current);
 
-  function createImage(src, alt){
-    const img = document.createElement('img');
-    img.src = src; img.alt = alt || '';
-    img.style.maxWidth = '100%'; img.style.maxHeight = '100%'; img.style.objectFit = 'contain';
-    img.id = 'slider-image';
-    return img;
-  }
+	// Autoplay cada 8s
+	let timer = setInterval(() => {
+		current = (current + 1) % sliderData.length;
+		renderMain(current);
+		renderThumbs(current);
+	}, 8000);
 
-  function createVideo(item){
-    const v = document.createElement('video');
-    v.src = item.src;
-    v.autoplay = true;
-    v.muted = true;
-    v.playsInline = true;
-    v.controls = false;
-    v.style.maxWidth='100%'; v.style.maxHeight='100%'; v.style.objectFit='contain';
-    return v;
-  }
+	// Pausar autoplay al interactuar
+	thumbsContainer.addEventListener('mouseenter', () => clearInterval(timer));
+	thumbsContainer.addEventListener('mouseleave', () => {
+		timer = setInterval(() => {
+			current = (current + 1) % sliderData.length;
+			renderMain(current);
+			renderThumbs(current);
+		}, 8000);
+	});
+});
 
-  let timer = null; // image timer
-  let videoTimer = null; // video timeout
-
-  function clearTimers(){ if(timer){ clearTimeout(timer); timer=null; } if(videoTimer){ clearTimeout(videoTimer); videoTimer=null; } }
-
-  function show(index){
-    const item = images[index];
-    if(!item) return;
-
-    clearTimers();
-    slideContainer.innerHTML = '';
-
-    // update titles
-    if(titleEl) titleEl.textContent = (item && item.title) ? item.title : '';
-    if(subtitleEl) subtitleEl.textContent = (item && item.subtitle) ? item.subtitle : '';
-
-    if(item.type === 'video' || (typeof item.src === 'string' && item.src.match(/\.mp4$/i))){
-      const v = createVideo(item);
-      slideContainer.appendChild(v);
-
-      const scheduleNext = (ms) => { videoTimer = setTimeout(()=>{ next(); }, ms); };
-
-      v.addEventListener('loadedmetadata', ()=>{
-        const ms = (item.duration && Number(item.duration)) ? Number(item.duration) : Math.round(v.duration*1000) || INTERVAL;
-        scheduleNext(ms);
-      }, { once:true });
-
-      // fallback: if metadata doesn't fire, use provided duration after short delay
-      setTimeout(()=>{
-        if(!videoTimer){ const ms = (item.duration && Number(item.duration)) ? Number(item.duration) : INTERVAL; scheduleNext(ms); }
-      }, 500);
-
-      v.addEventListener('ended', ()=>{ clearTimers(); next(); });
-      v.play().catch(()=>{});
-
-    } else {
-      const img = createImage(item.src, item.title || '');
-      slideContainer.appendChild(img);
-      // schedule next for image
-      timer = setTimeout(()=>{ next(); }, INTERVAL);
-    }
-  }
-
-  function goTo(i){
-    current = (i + total) % total;
-    show(current);
-  }
-
-  function next(){ goTo(current+1); }
-  function prev(){ goTo(current-1); }
-
-  function restartTimer(){
-    clearTimers();
-    const item = images[current];
-    if(!item) return;
-    if(item.type === 'video' || (typeof item.src === 'string' && item.src.match(/\.mp4$/i))){
-      // show() already scheduled videoTimer
-      return;
-    }
-    timer = setTimeout(()=>{ next(); }, INTERVAL);
-  }
-
-  // Wire buttons (there are duplicates: desktop + mobile controls)
-  prevBtns.forEach(b=>b.addEventListener('click', ()=>{ prev(); restartTimer(); }));
-  nextBtns.forEach(b=>b.addEventListener('click', ()=>{ next(); restartTimer(); }));
-
-  // keyboard
-  window.addEventListener('keydown', (e)=>{
-    if(e.key === 'ArrowLeft') { prev(); restartTimer(); }
-    if(e.key === 'ArrowRight') { next(); restartTimer(); }
-  });
-
-  // Pause on hover
-  const sliderRoot = document.querySelector('.slider');
-  sliderRoot.addEventListener('mouseenter', ()=>{
-    if(timer) { clearTimeout(timer); timer=null; }
-    if(videoTimer) { clearTimeout(videoTimer); videoTimer=null; }
-    const v = slideContainer.querySelector('video'); if(v && !v.paused) try{ v.pause(); }catch(e){}
-  });
-  sliderRoot.addEventListener('mouseleave', ()=>{
-    const v = slideContainer.querySelector('video'); if(v){ try{ v.play().catch(()=>{}); }catch(e){} }
-    restartTimer();
-  });
-
-  // initialization
-  function initSlider(){
-    if(total === 0){ return; }
-    preloadAll(); show(0); // restartTimer is called inside show for images
-  }
-
-  initSlider();
-})();
+// Nuevo proyecto: agrega aquí tu JS desde cero

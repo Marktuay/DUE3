@@ -1,108 +1,25 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Slider - Retratos</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Montserrat:wght@300;400;600&family=Great+Vibes&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <main class="page">
-      <section class="slider-wrapper">
-        <div class="slider" aria-live="polite">
-          <button class="nav prev" aria-label="Anterior">‹</button>
-          <div class="slide">
-            <img id="slider-image" src="images/1.jpg" alt="Imagen" />
-          </div>
-          <button class="nav next" aria-label="Siguiente">›</button>
-        </div>
-
-        <aside class="content">
-          <h1 class="title">RETRATOS</h1>
-          <h2 class="subtitle"></h2>
-
-          <div class="controls-mobile">
-            <button class="nav prev" aria-label="Anterior">‹</button>
-            <button class="nav next" aria-label="Siguiente">›</button>
-          </div>
-        </aside>
-      </section>
-    </main>
-
-    <!-- Intro overlay: reproduce media/intro.mp4 before starting the slider -->
-    <div id="intro" class="intro" aria-hidden="false">
-      <video id="intro-video" playsinline muted></video>
-      <button id="skip-intro" class="skip">Saltar</button>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Nuevo Proyecto</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="slider">
+    <div class="slider-thumbs" id="slider-thumbs"></div>
+    <div class="slider-main">
+      <img id="slider-main-img" src="images/1.jpg" alt="Imagen principal">
+      <div class="slider-title" id="slider-title">Título de la imagen 1</div>
     </div>
+  </div>
+</body>
+</html>
 
-    <script>
-      (function(){
-        const sources = ['media/intro.mp4','intro.mp4','video/intro.mp4'];
-        const video = document.getElementById('intro-video');
-        const container = document.getElementById('intro');
-        const skip = document.getElementById('skip-intro');
-        let loaded = false;
-
-        function finish(){
-          if(container){ container.style.display = 'none'; container.setAttribute('aria-hidden','true'); }
-          window.dispatchEvent(new Event('introended'));
-        }
-
-        function trySource(i){
-          if(i >= sources.length){ finish(); return; }
-          const src = sources[i];
-          video.src = src;
-          video.load();
-          const onLoaded = function(){ loaded = true; video.autoplay = true; video.muted = true; video.playsInline = true; video.play().catch(()=>{}); };
-          const onError = function(){ video.removeEventListener('loadedmetadata', onLoaded); video.removeEventListener('error', onError); trySource(i+1); };
-          video.addEventListener('loadedmetadata', onLoaded, { once:true });
-          video.addEventListener('error', onError, { once:true });
-        }
-
-        video.addEventListener('ended', finish);
-        skip.addEventListener('click', finish);
-        trySource(0);
-        setTimeout(()=>{ if(!loaded) finish(); }, 3000);
-      })();
-    </script>
-
-    <script>
-      // Lista de imágenes en orden ascendente (ruta relativa) ahora con título y subtítulo por imagen.
-      // Puedes editar los títulos/subtítulos aquí para que coincidan con cada fotografía.
-      window.IMAGES = [
-        { "src": "images/1.jpg", "title": "RAÍCES DEL COMPROMISO EUROPEO CON NICARAGUA", "subtitle": "" },
-        { "src": "images/2.jpg", "title": "CORAZÓN REGIONAL DEL DIÁLOGO Y LA INTEGRACIÓN REGIONAL", "subtitle": "" },
-        { "src": "images/3.jpg", "title": "SOLIDARIDAD EUROPEA TRAS EL HURACÁN MITCH", "subtitle": "" },
-        { "src": "images/4.jpg", "title": "IMPULSANDO ESPERANZA EN LAS COMUNIDADES RURALES", "subtitle": "" },
-        { "src": "images/5.jpg", "title": "CUENCA DEL RÍO COCO: POBLACIONES PREPARADAS FRENTE AL CAMBIO CLIMÁTICO", "subtitle": "" },
-        { "src": "images/6.jpg", "title": "RUTA COLONIAL Y DE LOS VOLCANES: TURISMO SOSTENIBLE PARA  EL DESARROLLO LOCAL", "subtitle": "" },
-        { "src": "images/7.jpg", "title": "AGUA Y SANEAMIENTO PARA LA VIDA", "subtitle": "" },
-        { "src": "images/8.jpg", "title": "EDUCACIÓN: MOTOR DE DESARROLLO", "subtitle": "" },
-        { "src": "images/9.jpg", "title": "ENERGÍA LIMPIA PARA UN FUTURO SOSTENIBLE", "subtitle": "" },
-        { "src": "images/10.jpg", "title": "UNA PUERTA AL MERCADO EUROPEO", "subtitle": "" },
-        { "src": "images/11.jpg", "title": "CACAO CON ENFOQUEDE GÉNERO", "subtitle": "" },
-        { "src": "images/12.jpg", "title": "MIPYMES AGROPECUARIAS Y PESQUERAS CON VALOR AGREGADO", "subtitle": "" },
-        { "src": "images/13.jpg", "title": "ACCESIBILIDAD URBANA CON ENFOQUE INCLUSIVO", "subtitle": "" },
-        { "src": "images/14.jpg", "title": "TRAZABILIDAD SANITARIA CON ESTÁNDARES INTERNACIONALES", "subtitle": "" },
-        { "src": "images/15.jpg", "title": "INTEGRACIÓN FRONTERIZA: ACERCANDO A LOS PAÍSES DE LA REGIÓN", "subtitle": "" },
-        { "src": "images/16.jpg", "title": "MERIENDA ESCOLAR: NUTRICIÓN Y EDUCACIÓN", "subtitle": "" },
-        { "src": "images/17.jpg", "title": "EQUIPO EUROPA FRENTE AL COVID-19", "subtitle": "" },
-        { "src": "images/18.jpg", "title": "FERIA DE BECAS DE EUROPA: ABRIENDO MENTES, CAMBIANDO VIDAS", "subtitle": "" },
-        { "src": "images/19.jpg", "title": "ACUERDO DE ASOCIACIÓN UE-CA: UN PUENTE BIRREGIONAL DE DIÁLOGO, VALORES Y FUTURO COMPARTIDO", "subtitle": "" },
-        { "src": "images/20.jpg", "title": "JORNADAS EUROPEAS PARA EL DESARROLLO (EDD): UN LLAMADO DESDE LOS OCÉANOS", "subtitle": "" },
-        { "src": "images/21.jpg", "title": "MUESTRA DE CINE EUROPEO: HISTORIAS Y LENTES QUE NOS UNEN", "subtitle": "" },
-        { "src": "images/22.jpg", "title": "ÓPERA CARMEN: UN CLÁSICO UNIVERSAL EN EL CORAZÓN DE NICARAGUA", "subtitle": "" },
-        { "src": "images/23.jpg", "title": "CUÉNTAME EUROPA: SEMBRANDO SUEÑOS EN CADA PÁGINA", "subtitle": "" },
-        { "src": "images/24.jpg", "title": "PLATIQUEMOS CON EUROPA: VOCES JÓVENES, INTERCAMBIOS QUE ENRIQUECEN", "subtitle": "" },
-        { "src": "images/25.jpg", "title": "RESPUESTA A EPIDEMIAS: PROTEGER VIDAS, FORTALECER COMUNIDADES", "subtitle": "" },
-        { "src": "images/26.jpg", "title": "COMUNIDADES MÁS FUERTES FRENTE A DESASTRES NATURALES", "subtitle": "" },
-        { "src": "images/27.jpg", "title": "SEGURIDAD ALIMENTARIA EN EL CORREDOR SECO: FORTALECIENDO VIDAS Y RESILIENCIA", "subtitle": "" },
-        { "src": "images/28.jpg", "title": "HURACANES ETA E IOTA: RESPUESTA HUMANITARIA Y RESILIENCIA", "subtitle": "" }
-      ];
-    </script>
+    
+    
+      
     <script src="slider.js"></script>
   </body>
 </html>
